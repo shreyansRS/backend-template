@@ -1,0 +1,1 @@
+export const PASSPORT_SECRET = process.env.PASSPORT_SECRET_KEY;
