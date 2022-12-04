@@ -7,7 +7,8 @@ import { AddressInfo } from "net";
 import passport from "passport";
 import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
-import { ApplicationConfig, DBConfig, KeyConfigs } from "./configs";
+import { ApplicationConfig, DBConfig, KeyConfigs, UrlConfigs } from "./configs";
+import { UserController, AuthenticationController } from "./controllers";
 import { UserModel } from "./models";
 import { DataUtils, LoggerUtils } from "./utils";
 const app = express();
@@ -52,25 +53,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan("dev"));
 
-app.get("/", (req, res) => {
-    res.set('Content-Type', 'text/html');
-    res.send(Buffer.from(`
-    <form method="POST" action="/redirect">
-        <input type="text" id="fname" name="fname"><br>
-        <input type="submit" value="Submit">
-    </form>
-    `
-
-    ));
-
-})
-
-app.post("/redirect", (req, res) => {
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0'); // one year
-    res.redirect("https://localhost:3000")
-})
-// app.use(UrlConfigs.API.ROOT, AuthenticationController);
-// app.use(UrlConfigs.API.ROOT, UserController);
+app.use(UrlConfigs.API.ROOT, AuthenticationController);
+app.use(UrlConfigs.API.ROOT, UserController);
 
 try {
     const server = app.listen(ApplicationConfig.PORT_NUMBER, () => {
